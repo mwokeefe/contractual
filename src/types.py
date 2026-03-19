@@ -19,8 +19,16 @@ from __future__ import annotations
 from typing import Any
 
 from .constraints import (
-    Constraint, _And, _Between, _Compare,
-    _ExactLen, _IsInstance, _Matches, _MaxLen, _MinLen, _NonEmpty,
+    Constraint,
+    _And,
+    _Between,
+    _Compare,
+    _ExactLen,
+    _IsInstance,
+    _Matches,
+    _MaxLen,
+    _MinLen,
+    _NonEmpty,
 )
 
 
@@ -32,20 +40,31 @@ class _TypeConstraint(Constraint):
 
     def __init__(self, *types: type, name: str = "") -> None:
         self._types = types
-        self._name  = name or " | ".join(t.__name__ for t in types)
-        self._tc    = _IsInstance(types)
+        self._name = name or " | ".join(t.__name__ for t in types)
+        self._tc = _IsInstance(types)
 
     def _c(self, constraint: Constraint) -> _And:
         """Bundle isinstance check with *constraint*."""
         return _And(self._tc, constraint)
 
     # Comparison operators -> _And(isinstance, _Compare)
-    def __gt__(self, other: Any) -> _And: return self._c(_Compare(">",  other))
-    def __ge__(self, other: Any) -> _And: return self._c(_Compare(">=", other))
-    def __lt__(self, other: Any) -> _And: return self._c(_Compare("<",  other))
-    def __le__(self, other: Any) -> _And: return self._c(_Compare("<=", other))
-    def __eq__(self, other: Any) -> _And: return self._c(_Compare("==", other))  # type: ignore[override]
-    def __ne__(self, other: Any) -> _And: return self._c(_Compare("!=", other))  # type: ignore[override]
+    def __gt__(self, other: Any) -> _And:
+        return self._c(_Compare(">", other))
+
+    def __ge__(self, other: Any) -> _And:
+        return self._c(_Compare(">=", other))
+
+    def __lt__(self, other: Any) -> _And:
+        return self._c(_Compare("<", other))
+
+    def __le__(self, other: Any) -> _And:
+        return self._c(_Compare("<=", other))
+
+    def __eq__(self, other: Any) -> _And:
+        return self._c(_Compare("==", other))  # type: ignore[override]
+
+    def __ne__(self, other: Any) -> _And:
+        return self._c(_Compare("!=", other))  # type: ignore[override]
 
     __hash__ = object.__hash__
 
@@ -87,6 +106,7 @@ class _TypeConstraint(Constraint):
     def one_of(self, *choices: Any) -> _And:
         """Value must be one of the supplied options."""
         from .constraints import _Or  # avoid circular at module level
+
         node: Constraint = _Compare("==", choices[0])
         for ch in choices[1:]:
             node = _Or(node, _Compare("==", ch))
@@ -94,18 +114,24 @@ class _TypeConstraint(Constraint):
 
 
 # Singletons — the public API
-Int   = _TypeConstraint(int,        name="int")
+Int = _TypeConstraint(int, name="int")
 Float = _TypeConstraint(float, int, name="float")
-Str   = _TypeConstraint(str,        name="str")
-Bool  = _TypeConstraint(bool,       name="bool")
-List  = _TypeConstraint(list,       name="list")
-Tuple = _TypeConstraint(tuple,      name="tuple")
-Dict  = _TypeConstraint(dict,       name="dict")
-Any_  = _TypeConstraint(object,     name="any")
+Str = _TypeConstraint(str, name="str")
+Bool = _TypeConstraint(bool, name="bool")
+List = _TypeConstraint(list, name="list")
+Tuple = _TypeConstraint(tuple, name="tuple")
+Dict = _TypeConstraint(dict, name="dict")
+Any_ = _TypeConstraint(object, name="any")
 
 
 __all__ = [
     "_TypeConstraint",
-    "Int", "Float", "Str", "Bool",
-    "List", "Tuple", "Dict", "Any_",
+    "Int",
+    "Float",
+    "Str",
+    "Bool",
+    "List",
+    "Tuple",
+    "Dict",
+    "Any_",
 ]

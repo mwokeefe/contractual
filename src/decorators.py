@@ -47,6 +47,7 @@ from .exceptions import InvariantError, PostconditionError, PreconditionError
 # Helper: extract a Constraint from an annotation
 # ---------------------------------------------------------------------------
 
+
 def _extract_constraint(annotation: Any) -> Constraint | None:
     """Return the first Constraint found in *annotation*, or None."""
     if isinstance(annotation, Constraint):
@@ -75,6 +76,7 @@ def _collect_constraints(fn: Callable) -> dict[str, Constraint]:
 # @contract
 # ---------------------------------------------------------------------------
 
+
 def contract(fn: Callable) -> Callable:
     """
     Enforce Constraint annotations on a function's parameters and return value.
@@ -88,9 +90,9 @@ def contract(fn: Callable) -> Callable:
     When ``pycontract.config.enabled`` is False the wrapper is a transparent
     pass-through with zero overhead.
     """
-    sig     = inspect.signature(fn)
-    all_c   = _collect_constraints(fn)
-    ret_c   = all_c.pop("return", None)
+    sig = inspect.signature(fn)
+    all_c = _collect_constraints(fn)
+    ret_c = all_c.pop("return", None)
     param_c = all_c
 
     # Optimisation: if there is nothing to check, return the original function
@@ -141,13 +143,14 @@ def contract(fn: Callable) -> Callable:
         return result
 
     wrapper.__param_constraints__ = param_c  # type: ignore[attr-defined]
-    wrapper.__return_constraint__  = ret_c   # type: ignore[attr-defined]
+    wrapper.__return_constraint__ = ret_c  # type: ignore[attr-defined]
     return wrapper
 
 
 # ---------------------------------------------------------------------------
 # @invariant
 # ---------------------------------------------------------------------------
+
 
 def invariant(cls: type) -> type:
     """
@@ -197,6 +200,7 @@ def invariant(cls: type) -> type:
             result = method(self, *args, **kwargs)
             _check_invariants(self)
             return result
+
         return wrapper
 
     for name, obj in inspect.getmembers(cls, predicate=inspect.isfunction):

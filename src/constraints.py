@@ -31,6 +31,7 @@ from typing import Any
 # Base
 # ---------------------------------------------------------------------------
 
+
 class Constraint:
     """
     Abstract base for all constraint objects.
@@ -50,9 +51,14 @@ class Constraint:
         """Human-readable description used in error messages."""
         return repr(self)
 
-    def __and__(self, other: "Constraint") -> "_And":    return _And(self, other)
-    def __or__(self, other: "Constraint") -> "_Or":      return _Or(self, other)
-    def __invert__(self) -> "_Not":                      return _Not(self)
+    def __and__(self, other: "Constraint") -> "_And":
+        return _And(self, other)
+
+    def __or__(self, other: "Constraint") -> "_Or":
+        return _Or(self, other)
+
+    def __invert__(self) -> "_Not":
+        return _Not(self)
 
     __hash__ = object.__hash__
 
@@ -60,6 +66,7 @@ class Constraint:
 # ---------------------------------------------------------------------------
 # Helper: cross-parameter reference resolution
 # ---------------------------------------------------------------------------
+
 
 def _resolve(value: Any, bound_args: dict | None) -> Any:
     """If *value* is a string key present in *bound_args*, return that arg."""
@@ -72,18 +79,19 @@ def _resolve(value: Any, bound_args: dict | None) -> Any:
 # Concrete constraint nodes
 # ---------------------------------------------------------------------------
 
+
 class _Compare(Constraint):
     _OPS = {
-        ">":  lambda a, b: a >  b,
+        ">": lambda a, b: a > b,
         ">=": lambda a, b: a >= b,
-        "<":  lambda a, b: a <  b,
+        "<": lambda a, b: a < b,
         "<=": lambda a, b: a <= b,
         "==": lambda a, b: a == b,
         "!=": lambda a, b: a != b,
     }
 
     def __init__(self, op: str, other: Any) -> None:
-        self._op    = op
+        self._op = op
         self._other = other
 
     def check(self, value: Any, bound_args: dict | None = None) -> bool:
@@ -99,7 +107,9 @@ class _Compare(Constraint):
 
 class _Between(Constraint):
     def __init__(self, lo: Any, hi: Any, *, inclusive: bool = True) -> None:
-        self._lo = lo; self._hi = hi; self._inclusive = inclusive
+        self._lo = lo
+        self._hi = hi
+        self._inclusive = inclusive
 
     def check(self, value: Any, bound_args: dict | None = None) -> bool:
         lo = _resolve(self._lo, bound_args)
@@ -114,7 +124,7 @@ class _Between(Constraint):
 class _Matches(Constraint):
     def __init__(self, pattern: str) -> None:
         self._pattern = pattern
-        self._re      = _re.compile(pattern)
+        self._re = _re.compile(pattern)
 
     def check(self, value: Any, bound_args: dict | None = None) -> bool:
         return bool(self._re.fullmatch(str(value)))
@@ -124,26 +134,44 @@ class _Matches(Constraint):
 
 
 class _MinLen(Constraint):
-    def __init__(self, n: int) -> None: self._n = n
-    def check(self, value: Any, bound_args: dict | None = None) -> bool: return len(value) >= self._n
-    def describe(self) -> str: return f"len(value) >= {self._n}"
+    def __init__(self, n: int) -> None:
+        self._n = n
+
+    def check(self, value: Any, bound_args: dict | None = None) -> bool:
+        return len(value) >= self._n
+
+    def describe(self) -> str:
+        return f"len(value) >= {self._n}"
 
 
 class _MaxLen(Constraint):
-    def __init__(self, n: int) -> None: self._n = n
-    def check(self, value: Any, bound_args: dict | None = None) -> bool: return len(value) <= self._n
-    def describe(self) -> str: return f"len(value) <= {self._n}"
+    def __init__(self, n: int) -> None:
+        self._n = n
+
+    def check(self, value: Any, bound_args: dict | None = None) -> bool:
+        return len(value) <= self._n
+
+    def describe(self) -> str:
+        return f"len(value) <= {self._n}"
 
 
 class _ExactLen(Constraint):
-    def __init__(self, n: int) -> None: self._n = n
-    def check(self, value: Any, bound_args: dict | None = None) -> bool: return len(value) == self._n
-    def describe(self) -> str: return f"len(value) == {self._n}"
+    def __init__(self, n: int) -> None:
+        self._n = n
+
+    def check(self, value: Any, bound_args: dict | None = None) -> bool:
+        return len(value) == self._n
+
+    def describe(self) -> str:
+        return f"len(value) == {self._n}"
 
 
 class _NonEmpty(Constraint):
-    def check(self, value: Any, bound_args: dict | None = None) -> bool: return bool(value)
-    def describe(self) -> str: return "value is non-empty"
+    def check(self, value: Any, bound_args: dict | None = None) -> bool:
+        return bool(value)
+
+    def describe(self) -> str:
+        return "value is non-empty"
 
 
 class _IsInstance(Constraint):
@@ -154,33 +182,57 @@ class _IsInstance(Constraint):
         return isinstance(value, self._types)
 
     def describe(self) -> str:
-        return "isinstance(value, {})".format(" | ".join(t.__name__ for t in self._types))
+        return "isinstance(value, {})".format(
+            " | ".join(t.__name__ for t in self._types)
+        )
 
 
 class _And(Constraint):
-    def __init__(self, a: Constraint, b: Constraint) -> None: self._a = a; self._b = b
+    def __init__(self, a: Constraint, b: Constraint) -> None:
+        self._a = a
+        self._b = b
+
     def check(self, value: Any, bound_args: dict | None = None) -> bool:
         return self._a.check(value, bound_args) and self._b.check(value, bound_args)
-    def describe(self) -> str: return f"({self._a.describe()} and {self._b.describe()})"
+
+    def describe(self) -> str:
+        return f"({self._a.describe()} and {self._b.describe()})"
 
 
 class _Or(Constraint):
-    def __init__(self, a: Constraint, b: Constraint) -> None: self._a = a; self._b = b
+    def __init__(self, a: Constraint, b: Constraint) -> None:
+        self._a = a
+        self._b = b
+
     def check(self, value: Any, bound_args: dict | None = None) -> bool:
         return self._a.check(value, bound_args) or self._b.check(value, bound_args)
-    def describe(self) -> str: return f"({self._a.describe()} or {self._b.describe()})"
+
+    def describe(self) -> str:
+        return f"({self._a.describe()} or {self._b.describe()})"
 
 
 class _Not(Constraint):
-    def __init__(self, inner: Constraint) -> None: self._inner = inner
+    def __init__(self, inner: Constraint) -> None:
+        self._inner = inner
+
     def check(self, value: Any, bound_args: dict | None = None) -> bool:
         return not self._inner.check(value, bound_args)
-    def describe(self) -> str: return f"not ({self._inner.describe()})"
+
+    def describe(self) -> str:
+        return f"not ({self._inner.describe()})"
 
 
 __all__ = [
     "Constraint",
-    "_Compare", "_Between", "_Matches",
-    "_MinLen", "_MaxLen", "_ExactLen", "_NonEmpty", "_IsInstance",
-    "_And", "_Or", "_Not",
+    "_Compare",
+    "_Between",
+    "_Matches",
+    "_MinLen",
+    "_MaxLen",
+    "_ExactLen",
+    "_NonEmpty",
+    "_IsInstance",
+    "_And",
+    "_Or",
+    "_Not",
 ]
