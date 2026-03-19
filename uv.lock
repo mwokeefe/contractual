@@ -39,7 +39,7 @@ wheels = [
 ]
 
 [[package]]
-name = "pycontract"
+name = "contractual"
 version = "0.1.0"
 source = { virtual = "." }
 

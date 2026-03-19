@@ -1,10 +1,10 @@
 """Tests for @contract and @invariant decorators."""
 
 import unittest
-import pycontract
-import pycontract.config as cfg
-from pycontract import contract, invariant, Int, Float, Str
-from pycontract.exceptions import InvariantError, PostconditionError, PreconditionError
+import contractual
+import contractual.config as cfg
+from contractual import contract, invariant, Int, Float, Str
+from contractual.exceptions import InvariantError, PostconditionError, PreconditionError
 
 
 class TestContractParams(unittest.TestCase):
@@ -194,9 +194,9 @@ class TestConfig(unittest.TestCase):
             f(-1)
 
     def test_top_level_shortcuts(self):
-        pycontract.disable()
+        contractual.disable()
         self.assertFalse(cfg.enabled)
-        pycontract.enable()
+        contractual.enable()
         self.assertTrue(cfg.enabled)
 
 

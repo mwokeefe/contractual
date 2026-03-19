@@ -1,5 +1,5 @@
 """
-pycontract.exceptions
+contractual.exceptions
 ---------------------
 All exceptions raised by the library.
 

@@ -1,7 +1,7 @@
-"""Tests for pycontract.constraints — the raw constraint nodes."""
+"""Tests for contractual.constraints — the raw constraint nodes."""
 
 import unittest
-from pycontract.constraints import (
+from contractual.constraints import (
     _And,
     _Between,
     _Compare,

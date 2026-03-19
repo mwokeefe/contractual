@@ -1,5 +1,5 @@
 """
-pycontract.constraints
+contractual.constraints
 ======================
 The ``Constraint`` base class and every concrete constraint node.
 

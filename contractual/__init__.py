@@ -1,11 +1,11 @@
 """
-pycontract
+contractual
 ==========
 Design by Contract for Python — no lambdas, no strings, just expressions.
 
 Quick start::
 
-    from pycontract import contract, invariant, Int, Float, Str
+    from contractual import contract, invariant, Int, Float, Str
 
     @contract
     def divide(x: Float, y: Float != 0) -> Float:
@@ -25,10 +25,10 @@ Quick start::
 
 Disabling checks (e.g. in production)::
 
-    import pycontract
-    pycontract.disable()
+    import contractual
+    contractual.disable()
     # ... later ...
-    pycontract.enable()
+    contractual.enable()
 """
 
 from .config import enable, disable

@@ -1,18 +1,18 @@
 """
-pycontract.config
+contractual.config
 =================
-Runtime configuration for pycontract.
+Runtime configuration for contractual.
 
-Set ``pycontract.config.enabled = False`` (or call ``disable()``) to
+Set ``contractual.config.enabled = False`` (or call ``disable()``) to
 zero-cost skip all checks — useful in production.
 
 Example::
 
-    import pycontract
-    pycontract.disable()   # turn off
-    pycontract.enable()    # turn back on
+    import contractual
+    contractual.disable()   # turn off
+    contractual.enable()    # turn back on
 
-    import pycontract.config as cfg
+    import contractual.config as cfg
     cfg.disable()
     cfg.enabled            # False
 """

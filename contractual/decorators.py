@@ -1,5 +1,5 @@
 """
-pycontract.decorators
+contractual.decorators
 =====================
 The two public decorators: :func:`contract` and :func:`invariant`.
 
@@ -7,7 +7,7 @@ The two public decorators: :func:`contract` and :func:`invariant`.
 -------------
 Enforces ``Constraint`` annotations on function parameters *and* return
 values.  Reads annotations at decoration time (once), then checks on
-every call.  Respects ``pycontract.config.enabled`` for zero-cost bypass.
+every call.  Respects ``contractual.config.enabled`` for zero-cost bypass.
 
     @contract
     def divide(x: Float, y: Float != 0) -> Float:
@@ -83,7 +83,7 @@ def contract(fn: Callable) -> Callable:
         def power(base: Float >= 0, exponent: Int.between(0, 10)) -> Float >= 0:
             return base ** exponent
 
-    When ``pycontract.config.enabled`` is False the wrapper is a transparent
+    When ``contractual.config.enabled`` is False the wrapper is a transparent
     pass-through with zero overhead.
     """
     sig = inspect.signature(fn)

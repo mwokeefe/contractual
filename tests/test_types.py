@@ -1,7 +1,7 @@
-"""Tests for pycontract.types — Int, Float, Str, … singletons."""
+"""Tests for contractual.types — Int, Float, Str, … singletons."""
 
 import unittest
-from pycontract.types import Float, Int, List, Str
+from contractual.types import Float, Int, List, Str
 
 
 class TestInt(unittest.TestCase):

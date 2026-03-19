@@ -1,5 +1,5 @@
 """
-pycontract.types
+contractual.types
 ================
 Constraint-builder singletons: ``Int``, ``Float``, ``Str``, ``Bool``,
 ``List``, ``Tuple``, ``Dict``, ``Any_``.

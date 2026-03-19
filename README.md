@@ -1,10 +1,10 @@
-# pycontract
+# contractual
 
 Design by Contract for Python — write constraints directly in type annotations.
 No lambdas. No strings. Just natural Python expressions.
 
 ```python
-from pycontract import contract, invariant, Int, Float, Str
+from contractual import contract, invariant, Int, Float, Str
 
 @contract
 def power(base: Float >= 0, exponent: Int.between(0, 10)) -> Float >= 0:
@@ -28,7 +28,7 @@ class BankAccount:
 ## Contents
 
 - [Installation](#installation)
-- [Why pycontract?](#why-pycontract)
+- [Why contractual?](#why-contractual)
 - [Quick start](#quick-start)
 - [Constraint reference](#constraint-reference)
 - [Combining constraints](#combining-constraints)
@@ -46,21 +46,21 @@ class BankAccount:
 ## Installation
 
 ```bash
-pip install pycontract
+pip install contractual
 ```
 
 Development install (includes pytest):
 
 ```bash
-git clone https://github.com/you/pycontract
-cd pycontract
+git clone https://github.com/you/contractual
+cd contractual
 pip install -e ".[dev]"
 pytest
 ```
 
 ---
 
-## Why pycontract?
+## Why contractual?
 
 Design by Contract is a technique where you specify *what must be true* about
 inputs and outputs, rather than writing defensive `if` checks scattered through
@@ -76,10 +76,10 @@ Most Python DBC libraries require you to write lambdas or decorator arguments:
 def factorial(n): ...
 ```
 
-pycontract puts constraints directly in the annotation, where they belong:
+contractual puts constraints directly in the annotation, where they belong:
 
 ```python
-# After — pycontract
+# After — contractual
 @contract
 def factorial(n: Int >= 0) -> Int >= 0: ...
 ```
@@ -94,7 +94,7 @@ objects at decoration time and checks them on every call.
 ## Quick start
 
 ```python
-from pycontract import contract, invariant, Int, Float, Str, List
+from contractual import contract, invariant, Int, Float, Str, List
 ```
 
 **1. Decorate a function with `@contract`:**
@@ -129,8 +129,8 @@ class Stack:
 **3. Disable checks in production:**
 
 ```python
-import pycontract
-pycontract.disable()
+import contractual
+contractual.disable()
 ```
 
 ---
@@ -284,11 +284,11 @@ class Temperature:
 ## Using with `Annotated`
 
 If you want to keep standard Python type hints for type checkers (mypy,
-pyright) while still using pycontract constraints, use `typing.Annotated`:
+pyright) while still using contractual constraints, use `typing.Annotated`:
 
 ```python
 from typing import Annotated
-from pycontract import contract, Int, Float
+from contractual import contract, Int, Float
 
 @contract
 def interest(principal: Annotated[float, Float > 0],
@@ -297,38 +297,38 @@ def interest(principal: Annotated[float, Float > 0],
     return principal * (1 + rate) ** years
 ```
 
-The type checker sees `float` / `int`; pycontract sees the constraint in the
+The type checker sees `float` / `int`; contractual sees the constraint in the
 second `Annotated` argument. Both are happy.
 
 ---
 
 ## Disabling checks
 
-Set `pycontract.config.enabled = False` (or call the helper functions) to skip
+Set `contractual.config.enabled = False` (or call the helper functions) to skip
 all constraint checks globally. The wrappers become transparent pass-throughs
 with no measurable overhead — useful when you trust your production inputs and
 want zero overhead.
 
 ```python
-import pycontract
+import contractual
 
 # Disable
-pycontract.disable()
+contractual.disable()
 
 # Re-enable
-pycontract.enable()
+contractual.enable()
 
 # Check current state
-print(pycontract.config.enabled)  # True / False
+print(contractual.config.enabled)  # True / False
 ```
 
 You can also drive this from an environment variable in your app's entry point:
 
 ```python
-import os, pycontract
+import os, contractual
 
 if os.getenv("ENV") == "production":
-    pycontract.disable()
+    contractual.disable()
 ```
 
 ---
@@ -347,7 +347,7 @@ ContractError
 Catch them specifically or together:
 
 ```python
-from pycontract import PreconditionError, ContractError
+from contractual import PreconditionError, ContractError
 
 try:
     divide(10, 0)
@@ -361,7 +361,7 @@ Error messages include the function name, the parameter name, the offending
 value, and a description of the constraint:
 
 ```
-pycontract.exceptions.PreconditionError:
+contractual.exceptions.PreconditionError:
     divide: 'y=0.0' violates — value != 0
 ```
 
@@ -370,7 +370,7 @@ pycontract.exceptions.PreconditionError:
 ## Package layout
 
 ```
-pycontract/
+contractual/
 ├── __init__.py        # public API — import everything from here
 ├── config.py          # enabled flag, enable() / disable()
 ├── constraints.py     # Constraint base class + internal nodes
@@ -383,11 +383,11 @@ pycontract/
 ```
 
 If you want to define a custom constraint type, subclass `Constraint` from
-`pycontract.constraints` and implement `check(value, bound_args)` and
+`contractual.constraints` and implement `check(value, bound_args)` and
 `describe()`:
 
 ```python
-from pycontract.constraints import Constraint
+from contractual.constraints import Constraint
 
 class Positive(Constraint):
     def check(self, value, bound_args=None) -> bool:
