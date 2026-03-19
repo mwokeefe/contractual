@@ -66,9 +66,8 @@ def _collect_constraints(fn: Callable) -> dict[str, Constraint]:
     except Exception:
         hints = getattr(fn, "__annotations__", {})
     return {
-        name: c
+        name: _extract_constraint(ann)
         for name, ann in hints.items()
-        if (c := _extract_constraint(ann)) is not None
     }
 
 
@@ -172,9 +171,8 @@ def invariant(cls: type) -> type:
                 self.height *= factor
     """
     attr_constraints: dict[str, Constraint] = {
-        name: c
+        name: _extract_constraint(ann)
         for name, ann in getattr(cls, "__annotations__", {}).items()
-        if (c := _extract_constraint(ann)) is not None
     }
     cls_name = cls.__qualname__
 
