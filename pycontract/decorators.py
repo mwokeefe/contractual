@@ -65,10 +65,7 @@ def _collect_constraints(fn: Callable) -> dict[str, Constraint]:
         hints = get_type_hints(fn, include_extras=True)
     except Exception:
         hints = getattr(fn, "__annotations__", {})
-    return {
-        name: _extract_constraint(ann)
-        for name, ann in hints.items()
-    }
+    return {name: _extract_constraint(ann) for name, ann in hints.items()}
 
 
 # ---------------------------------------------------------------------------

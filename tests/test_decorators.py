@@ -1,4 +1,5 @@
 """Tests for @contract and @invariant decorators."""
+
 import unittest
 import pycontract
 import pycontract.config as cfg
@@ -11,12 +12,14 @@ class TestContractParams(unittest.TestCase):
         @contract
         def f(x: Int > 0) -> int:
             return x
+
         self.assertEqual(f(1), 1)
 
     def test_precondition_raises(self):
         @contract
         def f(x: Int > 0) -> int:
             return x
+
         with self.assertRaises(PreconditionError) as ctx:
             f(0)
         self.assertIn("x=0", str(ctx.exception))
@@ -25,6 +28,7 @@ class TestContractParams(unittest.TestCase):
         @contract
         def f(x: Int > 0, y: Float >= 0) -> float:
             return x + y
+
         self.assertEqual(f(1, 0.0), 1.0)
         with self.assertRaises(PreconditionError) as ctx:
             f(1, -1.0)
@@ -34,12 +38,14 @@ class TestContractParams(unittest.TestCase):
         @contract
         def f(x: Int > 0, y) -> int:
             return x
+
         self.assertEqual(f(1, "anything"), 1)
 
     def test_default_args(self):
         @contract
         def f(x: Int > 0, y: Int > 0 = 5) -> int:
             return x + y
+
         self.assertEqual(f(1), 6)
         with self.assertRaises(PreconditionError):
             f(1, y=0)
@@ -48,11 +54,13 @@ class TestContractParams(unittest.TestCase):
         @contract
         def f(x: Int > 0) -> int:
             return x
+
         self.assertEqual(f(x=3), 3)
 
     def test_no_constraints_returns_original(self):
         def f(x):
             return x
+
         self.assertIs(contract(f), f)
 
 
@@ -61,12 +69,14 @@ class TestContractReturn(unittest.TestCase):
         @contract
         def f(x: Int) -> Int > 0:
             return x
+
         self.assertEqual(f(1), 1)
 
     def test_return_fails(self):
         @contract
         def f(x: Int) -> Int > 0:
             return -x
+
         with self.assertRaises(PostconditionError) as ctx:
             f(1)
         self.assertIn("return value", str(ctx.exception))
@@ -77,6 +87,7 @@ class TestContractIntrospection(unittest.TestCase):
         @contract
         def f(x: Int > 0, y: Str) -> Int:
             return x
+
         self.assertIn("x", f.__param_constraints__)
         self.assertIn("y", f.__param_constraints__)
 
@@ -85,6 +96,7 @@ class TestContractIntrospection(unittest.TestCase):
         def my_function(x: Int > 0) -> int:
             """Docstring."""
             return x
+
         self.assertEqual(my_function.__name__, "my_function")
         self.assertEqual(my_function.__doc__, "Docstring.")
 
@@ -97,7 +109,7 @@ class TestInvariant(unittest.TestCase):
             owner: Str.non_empty()
 
             def __init__(self, owner: str, balance: float) -> None:
-                self.owner   = owner
+                self.owner = owner
                 self.balance = balance
 
             def deposit(self, amount: float) -> None:
@@ -141,17 +153,21 @@ class TestInvariant(unittest.TestCase):
     def test_introspection(self):
         BankAccount = self._make_account()
         self.assertIn("balance", BankAccount.__invariant_constraints__)
-        self.assertIn("owner",   BankAccount.__invariant_constraints__)
+        self.assertIn("owner", BankAccount.__invariant_constraints__)
 
 
 class TestConfig(unittest.TestCase):
-    def setUp(self):    cfg.enable()
-    def tearDown(self): cfg.enable()
+    def setUp(self):
+        cfg.enable()
+
+    def tearDown(self):
+        cfg.enable()
 
     def test_disable_skips_contract(self):
         @contract
         def f(x: Int > 0) -> int:
             return x
+
         cfg.disable()
         self.assertEqual(f(-999), -999)
 
@@ -159,8 +175,10 @@ class TestConfig(unittest.TestCase):
         @invariant
         class C:
             x: Int > 0
+
             def __init__(self, v: int) -> None:
                 self.x = v
+
         cfg.disable()
         c = C(-1)
         self.assertEqual(c.x, -1)
@@ -169,6 +187,7 @@ class TestConfig(unittest.TestCase):
         @contract
         def f(x: Int > 0) -> int:
             return x
+
         cfg.disable()
         cfg.enable()
         with self.assertRaises(PreconditionError):
