@@ -1,7 +1,7 @@
 [project]
 name = "contractual"
 version = "0.1.0"
-description = "Add your description here"
+description = "Design by contract in vanilla python."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = []
